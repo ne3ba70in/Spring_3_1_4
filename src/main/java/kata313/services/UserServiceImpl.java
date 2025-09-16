@@ -1,0 +1,84 @@
+package kata313.services;
+
+import kata313.entities.Role;
+import kata313.entities.User;
+import kata313.repositories.RoleRepository;
+import kata313.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Service
+@Transactional
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Пользователь с данным ID не найден: " + id));
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void saveUser(User user, String roleName) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("Пользователь с данным мейлом: " + user.getEmail() + ", уже существует");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Роли " + roleName + " не существует"));
+        user.setRoles(Collections.singleton(role));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateUser(Long id, User userDetails, String roleName) {
+        User user = getUserById(id);
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setAge(userDetails.getAge());
+        user.setEmail(userDetails.getEmail());
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
+        Set<Role> roles = new HashSet<>();
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+        roles.add(role);
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
+}
+
