@@ -11,13 +11,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
-    public AdminController(UserService userService,
-                           RoleService roleService) {
+
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
@@ -34,19 +36,37 @@ public class AdminController {
         model.addAttribute("allRoles", roleService.findAllRoles());
         model.addAttribute("newUser", new User());
         model.addAttribute("showAddForm", Boolean.TRUE.equals(showForm));
+
+        // Добавьте это - список ролей для формы
+        model.addAttribute("roles", roleService.findAllRoles());
+
         return "admin";
     }
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute("newUser") User user,
-                          @RequestParam("role") String roleName,
+                          @RequestParam("roles") List<Long> roleIds, // Измените на список ID ролей
                           RedirectAttributes redirectAttributes) {
         try {
-            userService.saveUser(user, roleName);
+            userService.saveUser(user, roleIds);
             redirectAttributes.addFlashAttribute("successMessage", "Пользователь успешно добавлен!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при добавлении пользователя: " + e.getMessage());
             redirectAttributes.addAttribute("showForm", true);
+        }
+        return "redirect:/admin?view=admin";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateUser(@PathVariable("id") Long id,
+                             @ModelAttribute("user") User user,
+                             @RequestParam("roles") List<Long> roleIds, // Измените на список ID ролей
+                             RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUser(id, user, roleIds);
+            redirectAttributes.addFlashAttribute("successMessage", "User updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating user: " + e.getMessage());
         }
         return "redirect:/admin?view=admin";
     }
@@ -58,28 +78,6 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("successMessage", "Пользователь успешно удален!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при удалении пользователя: " + e.getMessage());
-        }
-        return "redirect:/admin?view=admin";
-    }
-
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", roleService.findAllRoles());
-        return "edit-user";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable("id") Long id,
-                             @ModelAttribute("user") User user,
-                             @RequestParam("role") String roleName,
-                             RedirectAttributes redirectAttributes) {
-        try {
-            userService.updateUser(id, user, roleName);
-            redirectAttributes.addFlashAttribute("successMessage", "User updated successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating user: " + e.getMessage());
         }
         return "redirect:/admin?view=admin";
     }
