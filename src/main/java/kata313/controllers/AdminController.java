@@ -24,11 +24,6 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-//    @GetMapping("/")
-//    public String login() {
-//        return "login-page";
-//    }
-
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public String showAdminPage(@RequestParam(value = "view", defaultValue = "admin") String view,
