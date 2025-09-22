@@ -24,9 +24,14 @@ public class AdminController {
         this.roleService = roleService;
     }
 
+//    @GetMapping("/")
+//    public String login() {
+//        return "login-page";
+//    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public String adminPanel(@RequestParam(value = "view", defaultValue = "admin") String view,
+    public String showAdminPage(@RequestParam(value = "view", defaultValue = "admin") String view,
                              @RequestParam(required = false) Boolean showForm,
                              Model model,
                              @AuthenticationPrincipal UserDetails userDetails) {
@@ -36,18 +41,18 @@ public class AdminController {
         model.addAttribute("allRoles", roleService.findAllRoles());
         model.addAttribute("newUser", new User());
         model.addAttribute("showAddForm", Boolean.TRUE.equals(showForm));
-
-        // Добавьте это - список ролей для формы
         model.addAttribute("roles", roleService.findAllRoles());
-
         return "admin";
     }
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute("newUser") User user,
-                          @RequestParam("roles") List<Long> roleIds, // Измените на список ID ролей
+                          @RequestParam(value = "roles", required = false) List<Long> roleIds,
                           RedirectAttributes redirectAttributes) {
         try {
+            if (roleIds == null || roleIds.isEmpty()) {
+                roleIds = List.of(1L);
+            }
             userService.saveUser(user, roleIds);
             redirectAttributes.addFlashAttribute("successMessage", "Пользователь успешно добавлен!");
         } catch (Exception e) {
@@ -60,13 +65,13 @@ public class AdminController {
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable("id") Long id,
                              @ModelAttribute("user") User user,
-                             @RequestParam("roles") List<Long> roleIds, // Измените на список ID ролей
+                             @RequestParam(value = "roles", defaultValue = "USER", required = false) List<Long> roleIds,
                              RedirectAttributes redirectAttributes) {
         try {
             userService.updateUser(id, user, roleIds);
-            redirectAttributes.addFlashAttribute("successMessage", "User updated successfully");
+            redirectAttributes.addFlashAttribute("successMessage", "Редактирование выполнено!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Ошибка редактирования пользователя: " + e.getMessage());
         }
         return "redirect:/admin?view=admin";
     }

@@ -9,6 +9,4 @@ import java.util.Optional;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(String name);
-    // Метод findById уже есть в JpaRepository, но если нужна кастомная реализация, добавьте:
-    // Optional<Role> findById(Long id);
 }

@@ -1,6 +1,5 @@
 package kata313.services;
 
-import kata313.details.UserDetailsImpl;
 import kata313.entities.User;
 import kata313.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +20,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User: " + email + " not found");
+            throw new UsernameNotFoundException("Пользователь: " + email + " не найден");
         }
         return new UserDetailsImpl(user);
     }
-
-
 }

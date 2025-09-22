@@ -9,6 +9,6 @@ public interface UserService {
     User getUserById(Long id);
     User getUserByEmail(String email);
     void deleteUserById(Long id);
-    void saveUser(User user, List<Long> roleIds); // Изменено на список ID ролей
-    void updateUser(Long id, User userDetails, List<Long> roleIds); // Изменено на список ID ролей
+    void saveUser(User user, List<Long> roleIds);
+    void updateUser(Long id, User userDetails, List<Long> roleIds);
 }

@@ -1,4 +1,4 @@
-package kata313.details;
+package kata313.services;
 
 import kata313.entities.User;
 import org.springframework.security.core.GrantedAuthority;
