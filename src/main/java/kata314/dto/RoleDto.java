@@ -1,4 +1,4 @@
-package kata314.config.dto;
+package kata314.dto;
 
 import kata314.entities.Role;
 import lombok.AllArgsConstructor;

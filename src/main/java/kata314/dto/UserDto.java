@@ -1,10 +1,12 @@
-package kata314.config.dto;
+package kata314.dto;
 
+import kata314.entities.Role;
 import kata314.entities.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -26,5 +28,14 @@ public class UserDto { // для чтения
         this.email = user.getEmail();
         this.age = user.getAge();
         this.roles = user.getRoles().stream().map(RoleDto::new).collect(Collectors.toList());
+    }
+
+    public UserDto(Long id, String firstName, String lastName, int age, String email, Set<Role> roles) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.roles = roles.stream().map(RoleDto::new).collect(Collectors.toList());
     }
 }

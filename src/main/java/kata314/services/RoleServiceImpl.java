@@ -1,11 +1,14 @@
 package kata314.services;
 
+import kata314.dto.RoleDto;
+import kata314.dto.UserDto;
 import kata314.entities.Role;
 import kata314.repositories.RoleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -17,13 +20,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findAllRoles() {
-        return roleRepository.findAll();
-    }
-
-    @Override
-    public Role findRoleById(Long id) {
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Роль с ID: " + id + " не найдена."));
+    public List<RoleDto> findAllRoles() {
+        return roleRepository.findAll().stream()
+                .map(RoleDto::new)
+                .collect(Collectors.toList());
     }
 }

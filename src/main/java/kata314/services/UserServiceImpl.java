@@ -1,6 +1,6 @@
 package kata314.services;
 
-import kata314.config.dto.UserDto;
+import kata314.dto.UserDto;
 import kata314.entities.Role;
 import kata314.entities.User;
 import kata314.repositories.RoleRepository;
@@ -27,11 +27,6 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
     }
 
     @Override

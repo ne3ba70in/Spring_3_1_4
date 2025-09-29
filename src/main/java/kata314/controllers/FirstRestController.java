@@ -1,8 +1,12 @@
 package kata314.controllers;
 
-import kata314.config.dto.UserDto;
+import kata314.dto.UserDto;
 import kata314.entities.User;
 import kata314.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +18,26 @@ public class FirstRestController {
 
     public FirstRestController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/users/current")
+    public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userService.getUserByEmail(authentication.getName());
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDto dto = new UserDto(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getAge(),
+                user.getEmail(),
+                user.getRoles()
+        );
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/users")
