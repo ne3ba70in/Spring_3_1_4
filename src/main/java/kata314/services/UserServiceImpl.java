@@ -1,9 +1,10 @@
-package kata313.services;
+package kata314.services;
 
-import kata313.entities.Role;
-import kata313.entities.User;
-import kata313.repositories.RoleRepository;
-import kata313.repositories.UserRepository;
+import kata314.config.dto.UserDto;
+import kata314.entities.Role;
+import kata314.entities.User;
+import kata314.repositories.RoleRepository;
+import kata314.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user, List<Long> roleIds) {
+    public User saveUser(User user, List<Long> roleIds) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new RuntimeException("Пользователь с данным мейлом: " + user.getEmail() + ", уже существует");
         }
@@ -64,29 +66,38 @@ public class UserServiceImpl implements UserService {
         }
         user.setRoles(roles);
         userRepository.save(user);
+        return user;
     }
 
     @Override
-    public void updateUser(Long id, User userDetails, List<Long> roleIds) {
+    public User updateUser(Long id, User updatedUser, List<Long> roleIds) {
+        User existingUser = getUserById(id);
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setAge(updatedUser.getAge());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+        if (roleIds != null && !roleIds.isEmpty()) {
+            Set<Role> roles = roleIds.stream()
+                    .map(roleId -> roleRepository.findById(roleId)
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
+                    .collect(Collectors.toSet());
+            existingUser.setRoles(roles);
+        }
+        return userRepository.save(existingUser);
+    }
+
+    public List<UserDto> findAllUsersDto() {
+        return userRepository.findAll().stream()
+                .map(UserDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto getUserDtoById(Long id) {
         User user = getUserById(id);
-        User existingUser = userRepository.findByEmail(userDetails.getEmail());
-        if (existingUser != null && !existingUser.getId().equals(id)) {
-            throw new RuntimeException("Пользователь с данным мейлом: " + userDetails.getEmail() + ", уже существует");
-        }
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setAge(userDetails.getAge());
-        user.setEmail(userDetails.getEmail());
-        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        }
-        Set<Role> roles = new HashSet<>();
-        for (Long roleId : roleIds) {
-            Role role = roleRepository.findById(roleId)
-                    .orElseThrow(() -> new RuntimeException("Роль с ID " + roleId + " не найдена"));
-            roles.add(role);
-        }
-        user.setRoles(roles);
-        userRepository.save(user);
+        return new UserDto(user);
     }
 }

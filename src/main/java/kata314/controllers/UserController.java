@@ -1,7 +1,7 @@
-package kata313.controllers;
+package kata314.controllers;
 
-import kata313.entities.User;
-import kata313.services.UserService;
+import kata314.entities.User;
+import kata314.services.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package kata313.config;
+package kata314.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

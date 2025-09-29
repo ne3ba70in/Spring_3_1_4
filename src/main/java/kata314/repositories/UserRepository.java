@@ -1,6 +1,6 @@
-package kata313.repositories;
+package kata314.repositories;
 
-import kata313.entities.User;
+import kata314.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

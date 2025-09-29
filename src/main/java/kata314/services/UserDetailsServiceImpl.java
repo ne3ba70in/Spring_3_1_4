@@ -1,7 +1,7 @@
-package kata313.services;
+package kata314.services;
 
-import kata313.entities.User;
-import kata313.repositories.UserRepository;
+import kata314.entities.User;
+import kata314.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

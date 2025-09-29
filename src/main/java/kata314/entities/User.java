@@ -1,10 +1,11 @@
-package kata313.entities;
+package kata314.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,4 +44,5 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
 }

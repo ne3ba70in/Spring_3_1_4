@@ -1,8 +1,8 @@
-package kata313.controllers;
+package kata314.controllers;
 
-import kata313.entities.User;
-import kata313.services.RoleService;
-import kata313.services.UserService;
+import kata314.entities.User;
+import kata314.services.RoleService;
+import kata314.services.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,7 +60,7 @@ public class AdminController {
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable("id") Long id,
                              @ModelAttribute("user") User user,
-                             @RequestParam(value = "roles", defaultValue = "USER", required = false) List<Long> roleIds,
+                             @RequestParam(value = "roles", required = false) List<Long> roleIds,
                              RedirectAttributes redirectAttributes) {
         try {
             userService.updateUser(id, user, roleIds);

@@ -1,6 +1,6 @@
-package kata313.services;
+package kata314.services;
 
-import kata313.entities.User;
+import kata314.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
