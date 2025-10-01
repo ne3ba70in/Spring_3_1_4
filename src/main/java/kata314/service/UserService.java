@@ -1,7 +1,7 @@
-package kata314.services;
+package kata314.service;
 
 import kata314.dto.UserDto;
-import kata314.entities.User;
+import kata314.entity.User;
 
 import java.util.List;
 

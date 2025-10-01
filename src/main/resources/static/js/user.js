@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadCurrentUser() {
         try {
-            const res = await fetch("/api/users/current");
+            const res = await fetch("/user/current");
             if (!res.ok) {
                 console.error("Ошибка получения пользователя:", res.status);
                 return;

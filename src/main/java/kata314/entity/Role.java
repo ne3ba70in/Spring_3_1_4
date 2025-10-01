@@ -1,4 +1,4 @@
-package kata314.entities;
+package kata314.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

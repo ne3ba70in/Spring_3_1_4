@@ -1,10 +1,11 @@
-package kata314.services;
+package kata314.service;
 
+import kata314.util.UserMapper;
 import kata314.dto.UserDto;
-import kata314.entities.Role;
-import kata314.entities.User;
-import kata314.repositories.RoleRepository;
-import kata314.repositories.UserRepository;
+import kata314.entity.Role;
+import kata314.entity.User;
+import kata314.repository.RoleRepository;
+import kata314.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +21,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -49,40 +52,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user, List<Long> roleIds) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Пользователь с данным мейлом: " + user.getEmail() + ", уже существует");
-        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Set<Role> roles = new HashSet<>();
-        for (Long roleId : roleIds) {
-            Role role = roleRepository.findById(roleId)
-                    .orElseThrow(() -> new RuntimeException("Роль с ID " + roleId + " не найдена"));
-            roles.add(role);
-        }
+        Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
         user.setRoles(roles);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long id, User updatedUser, List<Long> roleIds) {
-        User existingUser = getUserById(id);
-        existingUser.setFirstName(updatedUser.getFirstName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setLastName(updatedUser.getLastName());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setAge(updatedUser.getAge());
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+    public User updateUser(Long id, User user, List<Long> roleIds) {
+        User updatedUser = getUserById(id);
+        updatedUser.setFirstName(user.getFirstName());
+        updatedUser.setLastName(user.getLastName());
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setAge(user.getAge());
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        if (roleIds != null && !roleIds.isEmpty()) {
-            Set<Role> roles = roleIds.stream()
-                    .map(roleId -> roleRepository.findById(roleId)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleId)))
-                    .collect(Collectors.toSet());
-            existingUser.setRoles(roles);
-        }
-        return userRepository.save(existingUser);
+        Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
+        updatedUser.setRoles(roles);
+        return userRepository.save(updatedUser);
     }
 
     public List<UserDto> findAllUsersDto() {
@@ -93,6 +81,6 @@ public class UserServiceImpl implements UserService {
 
     public UserDto getUserDtoById(Long id) {
         User user = getUserById(id);
-        return new UserDto(user);
+        return userMapper.toDto(user);
     }
 }

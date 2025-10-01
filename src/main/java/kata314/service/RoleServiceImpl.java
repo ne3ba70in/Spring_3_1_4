@@ -1,9 +1,7 @@
-package kata314.services;
+package kata314.service;
 
 import kata314.dto.RoleDto;
-import kata314.dto.UserDto;
-import kata314.entities.Role;
-import kata314.repositories.RoleRepository;
+import kata314.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

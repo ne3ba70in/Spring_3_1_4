@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --------------------- Загрузка ролей ---------------------
     async function loadRoles() {
-        const res = await fetch("/api/roles");
+        const res = await fetch("/admin/roles");
         rolesList = await res.json();
 
         rolesSelect.innerHTML = "";
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --------------------- Загрузка пользователей ---------------------
     async function loadUsers() {
-        const res = await fetch("/api/users");
+        const res = await fetch("/admin/users");
         const users = await res.json();
         usersTableBody.innerHTML = "";
 
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --------------------- Загрузка текущего пользователя ---------------------
     async function loadCurrentUser() {
-        const res = await fetch("/api/users/current");
+        const res = await fetch("/user/current");
         if (!res.ok) return;
         const user = await res.json();
 
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             password: formData.get("password")
         };
 
-        await fetch(`/api/users?roleIds=${roleIds.join("&roleIds=")}`, {
+        await fetch(`/admin/users?roleIds=${roleIds.join("&roleIds=")}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData)
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".editBtn").forEach(btn => {
             btn.addEventListener("click", async () => {
                 const userId = btn.dataset.id;
-                const res = await fetch(`/api/users/${userId}`);
+                const res = await fetch(`/admin/users/${userId}`);
                 const user = await res.json();
 
                 document.getElementById("editUserId").value = user.id;
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
             password: formData.get("password")
         };
 
-        await fetch(`/api/users/${userId}?roleIds=${roleIds.join("&roleIds=")}`, {
+        await fetch(`/admin/users/${userId}?roleIds=${roleIds.join("&roleIds=")}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData)
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".deleteBtn").forEach(btn => {
             btn.addEventListener("click", async () => {
                 const userId = btn.dataset.id;
-                const res = await fetch(`/api/users/${userId}`);
+                const res = await fetch(`/admin/users/${userId}`);
                 const user = await res.json();
 
                 document.getElementById("deleteUserId").value = user.id;
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         const userId = document.getElementById("deleteUserId").value;
 
-        const res = await fetch(`/api/users/${userId}`, { method: "DELETE" });
+        const res = await fetch(`/admin/users/${userId}`, { method: "DELETE" });
 
         if (res.ok) {
             bootstrap.Modal.getInstance(document.getElementById("deleteUserModal")).hide();

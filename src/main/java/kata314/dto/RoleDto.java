@@ -1,6 +1,6 @@
 package kata314.dto;
 
-import kata314.entities.Role;
+import kata314.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

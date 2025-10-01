@@ -1,7 +1,6 @@
-package kata314.services;
+package kata314.service;
 
 import kata314.dto.RoleDto;
-import kata314.entities.Role;
 
 import java.util.List;
 
