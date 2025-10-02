@@ -5,6 +5,7 @@ import kata314.dto.UserDto;
 import kata314.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,5 +19,11 @@ public class UserMapper {
         userDto.setAge(user.getAge());
         userDto.setRoles(user.getRoles().stream().map(RoleDto::new).collect(Collectors.toList()));
         return userDto;
+    }
+
+    public List<UserDto> toDto(List<User> users) {
+        return users.stream()
+                .map(user -> toDto(user))
+                .collect(Collectors.toList());
     }
 }

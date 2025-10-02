@@ -27,12 +27,12 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.findAllUsersDto());
+        return ResponseEntity.ok(userMapper.toDto(userService.findAllUsers()));
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserDtoById(id));
+        return ResponseEntity.ok(userMapper.toDto(userService.getUserById(id)));
     }
 
     @PostMapping("/users")

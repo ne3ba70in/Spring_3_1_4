@@ -1,7 +1,5 @@
 package kata314.service;
 
-import kata314.util.UserMapper;
-import kata314.dto.UserDto;
 import kata314.entity.Role;
 import kata314.entity.User;
 import kata314.repository.RoleRepository;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -21,15 +18,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, UserMapper userMapper) {
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -71,16 +71,5 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
         updatedUser.setRoles(roles);
         return userRepository.save(updatedUser);
-    }
-
-    public List<UserDto> findAllUsersDto() {
-        return userRepository.findAll().stream()
-                .map(UserDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public UserDto getUserDtoById(Long id) {
-        User user = getUserById(id);
-        return userMapper.toDto(user);
     }
 }
